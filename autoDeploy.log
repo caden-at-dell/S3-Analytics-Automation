@@ -1,0 +1,5 @@
+configmap/rootca-cert created
+secret/mssql-secret created
+persistentvolumeclaim/new-sql-pvc-31445 created
+deployment.apps/new-sql-deployment created
+service/mssql-service-31445 created

@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-sql-deployment
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+     matchLabels:
+       app: mssql-31445
+  template:
+    metadata:
+      labels:
+        app: mssql-31445
+    spec:
+      terminationGracePeriodSeconds: 30
+      hostname: mssqlinst
+      securityContext:
+        fsGroup: 10001
+      containers:
+      - name: mssql
+        image: docker.io/sanran/sql22-polybase-with-cert:v2-t13702
+        resources:
+          requests:
+            memory: "128G"
+            cpu: "12000m"
+          limits:
+            memory: "128G"
+            cpu: "12000m"
+        ports:
+        - containerPort: 31445
+        env:
+        - name: MSSQL_PID
+          value: "Developer"
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql-secret
+              key: MSSQL_SA_PASSWORD
+        volumeMounts:
+        - name: mssqldb
+          mountPath: /var/opt/mssql
+        - name: rootca-cert
+          mountPath: /var/opt/mssql/security/ca-certificates/rootCA.crt
+          subPath: rootCA.crt
+          readOnly: true
+      volumes:
+      - name: mssqldb
+        persistentVolumeClaim:
+          claimName: new-sql-pvc-31445
+      - name: rootca-cert
+        configMap:
+          name: rootca-cert

@@ -1,0 +1,14 @@
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+
+[dn]
+C=US
+ST=Durham
+L=Durham
+O=Dell
+OU=Bizapp
+emailAddress=admin@proddc.sql
+CN = sqlpool.proddc.sql
